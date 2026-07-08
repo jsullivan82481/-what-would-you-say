@@ -1,0 +1,165 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>What Would You Say?</title>
+<style>
+body{margin:0;font-family:Arial Rounded MT Bold,Arial,sans-serif;background:linear-gradient(135deg,#7bdcff,#ffe66d,#ff9bd8);text-align:center;color:#222}
+.app{padding:22px;max-width:850px;margin:auto}
+h1{font-size:38px;text-shadow:2px 2px #fff}
+.arcade{width:220px;height:220px;border-radius:50%;border:0;background:radial-gradient(circle at 35% 25%,#ffd18a,#ff8c00 45%,#c85a00 75%);box-shadow:0 16px 0 #7a3300,0 24px 30px rgba(0,0,0,.35);animation:pulse 1.5s infinite}
+.arcade:active{transform:translateY(13px);box-shadow:0 3px 0 #7a3300,0 10px 15px rgba(0,0,0,.25)}
+.prompt{font-size:28px;font-weight:bold;margin:22px}
+.card{background:#fff;border:6px solid #222;border-radius:32px;padding:24px;margin:20px 0;box-shadow:0 10px 0 rgba(0,0,0,.25)}
+#emoji{font-size:95px;animation:bounce 1s infinite}
+#scene{font-size:30px;font-weight:bold;line-height:1.15}
+#question{font-size:34px;color:#d0006f;margin-top:18px}
+.answer{display:block;width:100%;font-size:28px;margin:12px 0;padding:18px;border:5px solid #222;border-radius:24px;background:white;font-weight:bold;box-shadow:0 6px 0 #222}
+.answer:active{transform:translateY(5px);box-shadow:0 1px 0 #222}
+#reaction{font-size:34px;font-weight:bold;min-height:45px}
+.shake{animation:shake .35s}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-12px)}50%{transform:translateX(12px)}75%{transform:translateX(-8px)}}
+</style>
+</head>
+<body>
+<div class="app">
+<h1>🎲 What Would You Say?</h1>
+
+<button class="arcade" onclick="makeScene()" aria-label="Press the button"></button>
+<div class="prompt">Press the button!</div>
+
+<div class="card">
+<div id="emoji">🟠</div>
+<div id="scene">Ready?</div>
+<div id="question"></div>
+</div>
+
+<div id="answers"></div>
+<div id="reaction"></div>
+</div>
+
+<script>
+const characters=[
+["🦖","T-Rex"],["👽","an alien"],["🐀","Rick Ratman"],["🤖","a spooky animatronic"],
+["💩","King Poopy"],["🤢","a giant booger"],["🐶","Sully"],["🦭","Neil the Seal"],
+["⭐","a tiny Jedi"],["🚜","a monster truck"],["🎃","a pumpkin monster"]
+];
+
+const places=[
+"inside Spirit Halloween","at Lowe's in the Halloween aisle","at Home Depot with the skeletons",
+"on the Death Star","on the moon","inside a spaceship","in a pumpkin patch",
+"at a dinosaur dance party","in Booger Town","at a poop parade"
+];const actions=[
+"slips on a banana peel 🍌",
+"does the Cotton Eye Joe dance 🤠",
+"does the Cha Cha Slide 💃",
+"falls into marshmallows",
+"gets chased by a giant booger 🤢",
+"blows a raspberry 😝",
+"rides a toilet rocket 🚽🚀",
+"uses a lightsaber on a taco ⭐🌮",
+"sneezes so hard the hat flies off 🤧",
+"gets toilet paper stuck to a shoe 🧻",
+"crashes into a pumpkin 🎃",
+"rides a monster truck over spaghetti 🚜🍝"
+];
+
+const answers=[
+["😂","That was funny!"],
+["🍌","Watch out!"],
+["💃","Dance!"],
+["🤫","Nothing"],
+["🤢","Boogers!"],
+["⭐","Use the Force!"],
+["🌮","More tacos!"],
+["💩","Poop crown!"]
+];
+
+function pick(a){
+  return a[Math.floor(Math.random()*a.length)];
+}
+
+function say(text){
+  if(!("speechSynthesis" in window)) return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=0.85;
+  u.pitch=1.1;
+  speechSynthesis.speak(u);
+}
+
+function makeScene(){
+
+  // Raspberry sound
+  say("Pbbbbbbt!");
+
+  document.getElementById("reaction").textContent="";
+  document.getElementById("answers").innerHTML="";
+
+  setTimeout(()=>{
+
+    const c=pick(characters);
+    const place=pick(places);
+    const action=pick(actions);
+
+    document.getElementById("emoji").textContent=c[0];
+    document.getElementById("scene").textContent=
+      c[1]+" "+place+" and "+action+".";
+
+    document.getElementById("question").textContent=
+      "...aaaand what would you say?";
+
+    const choices=[
+      ["🤫","Nothing"],
+      pick(answers),
+      pick(answers),
+      pick(answers)
+    ]
+    .filter((v,i,a)=>a.findIndex(x=>x[1]==v[1])===i)
+    .sort(()=>Math.random()-0.5);
+
+    document.getElementById("answers").innerHTML=
+      choices.map(a=>
+      `<button class="answer"
+      onclick="reply('${a[1]}')">
+      ${a[0]}<br>${a[1]}
+      </button>`
+      ).join("");
+
+    // Read ONLY the question
+    say("Aaaaand... what would you say?");
+
+  },700);
+}
+
+function reply(text){
+
+  document.body.classList.remove("shake");
+  void document.body.offsetWidth;
+  document.body.classList.add("shake");
+
+  // Read whichever answer Tucker taps
+  if(text==="Nothing"){
+
+      say("Nothing");
+
+      setTimeout(()=>{
+        say("You can't say nothing!");
+        document.getElementById("reaction").textContent=
+        "😂 You can't say nothing!";
+      },1000);
+
+  }else{
+
+      say(text);
+      document.getElementById("reaction").textContent=
+      "🎉 "+text;
+
+  }
+
+}
+</script>
+</body>
+</html>

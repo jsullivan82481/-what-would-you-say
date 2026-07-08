@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>What Would You Say?</title>
+<style>
+body{margin:0;font-family:Arial Rounded MT Bold,Arial,sans-serif;background:linear-gradient(135deg,#7bdcff,#ffe66d,#ff9bd8);text-align:center;color:#222}
+.app{padding:20px;max-width:850px;margin:auto}
+h1{font-size:42px;text-shadow:2px 2px #fff}
+#btn{width:220px;height:220px;border-radius:50%;border:0;background:radial-gradient(circle at 35% 25%,#ffd18a,#ff8c00 45%,#b84f00 75%);box-shadow:0 16px 0 #743000,0 24px 30px rgba(0,0,0,.35);animation:pulse 1.4s infinite}
+#btn:active{transform:translateY(12px);box-shadow:0 4px 0 #743000}
+.prompt{font-size:30px;font-weight:bold;margin:20px}
+.card{background:white;border:6px solid #222;border-radius:30px;padding:24px;margin:20px 0;box-shadow:0 10px 0 rgba(0,0,0,.25)}
+#emoji{font-size:95px}
+#scene{font-size:31px;font-weight:bold}
+#question{font-size:34px;color:#d0006f;font-weight:bold;margin-top:18px}
+.answer{display:block;width:100%;font-size:30px;font-weight:bold;margin:12px 0;padding:18px;border:5px solid #222;border-radius:24px;background:white;box-shadow:0 6px 0 #222}
+.answer:active{transform:translateY(5px);box-shadow:0 1px 0 #222}
+#reaction{font-size:34px;font-weight:bold;min-height:48px}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+</style>
+</head>
+
+<body>
+<div class="app">
+<h1>🎲 What Would You Say?</h1>
+
+<button id="btn" onclick="pressMe()"></button>
+<div class="prompt">Press the button!</div>
+
+<div class="card">
+<div id="emoji">🟠</div>
+<div id="scene">Ready?</div>
+<div id="question" onclick="sayQuestion()"></div>
+</div>
+
+<div id="answers"></div>
+<div id="reaction"></div>
+</div>
+
+<script>
+const scenes=[
+["🦖","T-Rex slips on a banana peel while holding a lightsaber."],
+["👽","An alien rides a toilet rocket through Booger Town."],
+["🐀","Rick Ratman does the Cha Cha Slide inside Spirit Halloween."],
+["🤖","A spooky animatronic sneezes so hard its hat flies off."],
+["💩","King Poopy loses his crown in a monster truck."],
+["🤢","A giant booger chases a dinosaur through Home Depot."],
+["🐶","Sully gets toilet paper stuck to his shoe."],
+["🦭","Neil the Seal does the Cotton Eye Joe on the moon."],
+["🎃","A pumpkin monster slips into marshmallows."],
+["🚜","A monster truck drives over spaghetti and yells beep beep."]
+];
+
+const options=[
+["😂","Funny!"],
+["🍌","Watch out!"],
+["💃","Dance!"],
+["🤫","Nothing"],
+["🤢","Boogers!"],
+["⭐","Use the Force!"],
+["🌮","More tacos!"],
+["💩","Poop crown!"]
+];
+
+function pick(a){return a[Math.floor(Math.random()*a.length)]}
+
+function say(t){
+ if(!("speechSynthesis" in window)) return;
+ speechSynthesis.cancel();
+ let v=new SpeechSynthesisUtterance(t);
+ v.rate=.85;
+ v.pitch=1.15;
+ speechSynthesis.speak(v);
+}
+
+function sayQuestion(){
+ say("Aaaaand... what would you say?");
+}
+
+function makeAnswers(){
+ let chosen=[["🤫","Nothing"]];
+ while(chosen.length<4){
+  let o=pick(options);
+  if(!chosen.some(x=>x[1]===o[1])) chosen.push(o);
+ }
+ chosen.sort(()=>Math.random()-.5);
+ document.getElementById("answers").innerHTML="";
+ chosen.forEach(o=>{
+  let b=document.createElement("button");
+  b.className="answer";
+  b.innerHTML=o[0]+"<br>"+o[1];
+  b.onclick=function(){answer(o[1])};
+  document.getElementById("answers").appendChild(b);
+ });
+}
+
+function pressMe(){
+ say("Pbbbbbbt!");
+ document.getElementById("emoji").textContent="🟠";
+ document.getElementById("scene").textContent="Thinking...";
+ document.getElementById("question").textContent="";
+ document.getElementById("answers").innerHTML="";
+ document.getElementById("reaction").textContent="";
+
+ setTimeout(function(){
+  let s=pick(scenes);
+  document.getElementById("emoji").textContent=s[0];
+  document.getElementById("scene").textContent=s[1];
+  document.getElementById("question").textContent="...aaaand what would you say?";
+  makeAnswers();
+  say(s[1]+" Aaaaand... what would you say?");
+ },600);
+}
+
+function answer(t){
+ if(t==="Nothing"){
+  say("Nothing");
+  setTimeout(function(){
+   say("You can't say nothing!");
+   document.getElementById("reaction").textContent="😂 You can't say nothing!";
+  },800);
+ }else{
+  say(t);
+  document.getElementById("reaction").textContent="🎉 "+t;
+ }
+}
+</script>
+</body>
+</html>

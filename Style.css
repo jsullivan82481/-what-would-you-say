@@ -1,0 +1,124 @@
+body {
+  margin: 0;
+  font-family: "Arial Rounded MT Bold", Arial, sans-serif;
+  background: linear-gradient(135deg,#7bdcff,#ffe66d,#ff9bd8);
+  text-align: center;
+  color: #222;
+  overflow-x: hidden;
+}
+
+.app {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+}
+
+h1 {
+  font-size: 42px;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px white;
+}
+
+.arcade {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  background:
+    radial-gradient(circle at 35% 25%, #ffd18a, #ff8c00 45%, #c85a00 75%);
+  box-shadow:
+    0 16px 0 #7a3300,
+    0 24px 30px rgba(0,0,0,.35);
+  animation: pulse 1.5s infinite;
+}
+
+.arcade:active {
+  transform: translateY(12px);
+  box-shadow:
+    0 4px 0 #7a3300,
+    0 8px 16px rgba(0,0,0,.25);
+}
+
+.prompt {
+  margin: 20px;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.card {
+  background: white;
+  border: 6px solid #222;
+  border-radius: 30px;
+  padding: 25px;
+  margin-top: 20px;
+  box-shadow: 0 10px 0 rgba(0,0,0,.25);
+}
+
+#mainEmoji {
+  font-size: 90px;
+  animation: bounce 1s infinite;
+}
+
+#scene {
+  font-size: 30px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+#question {
+  font-size: 34px;
+  color: #d0006f;
+  margin-top: 20px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#question:active {
+  transform: scale(1.03);
+}
+
+.answer {
+  width: 100%;
+  margin: 12px 0;
+  padding: 18px;
+  border-radius: 22px;
+  border: 5px solid #222;
+  background: white;
+  font-size: 28px;
+  font-weight: bold;
+  box-shadow: 0 6px 0 #222;
+}
+
+.answer:active {
+  transform: translateY(5px);
+  box-shadow: 0 1px 0 #222;
+}
+
+#reaction {
+  min-height: 50px;
+  font-size: 34px;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+@keyframes pulse {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes bounce {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-12px); }
+  50% { transform: translateX(12px); }
+  75% { transform: translateX(-8px); }
+}
+
+.shake {
+  animation: shake .35s;
+}
